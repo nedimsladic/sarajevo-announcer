@@ -179,11 +179,12 @@ figcaption{display:flex;justify-content:space-between;align-items:center;gap:12p
 .tft-exit .en{color:var(--tft-muted);font-weight:600}
 .tft-exit svg{width:2.3cqw;height:2.3cqw;flex:none;color:var(--tft-accent)}
 /* the landmarks at the stop named above */
-.tft-near{display:flex;align-items:center;gap:2.2cqw;font:500 2.15cqw/1.25 var(--f-display);min-width:0;overflow:hidden}
-.tn-i{display:inline-flex;align-items:center;gap:.8cqw;min-width:0}
-.tn-i svg{width:2.2cqw;height:2.2cqw;flex:none;color:var(--tft-accent)}
+/* names in full: a name that does not fit beside the one before it goes on a row of its own */
+.tft-near{display:flex;flex-wrap:wrap;align-items:flex-start;gap:.7cqw 2.2cqw;font:500 2.15cqw/1.25 var(--f-display);min-width:0}
+.tn-i{display:inline-flex;align-items:flex-start;gap:.8cqw;min-width:0}
+.tn-i svg{width:2.2cqw;height:2.2cqw;flex:none;margin-top:.25cqw;color:var(--tft-accent)}
 .tn-i.shop svg{color:var(--tft-muted)}
-.tn-i b{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.tn-i b{font-weight:500}
 .tft-flags{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:.8cqw}
 .tft-chip{display:inline-flex;align-items:center;gap:.8cqw;font:700 1.6cqw/1 var(--f-display);padding:.75cqw 1.1cqw;border-radius:.6cqw;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap}
 .tft-chip b{font-size:1.95cqw;letter-spacing:.1em}
@@ -2899,11 +2900,10 @@ function renderState() {
     .concat(ns.m ? [`<span class="tn-i shop">${BAG}<b>${esc(ns.m)}</b></span>`] : []) : [];
   near.innerHTML = items.join('');
   near.hidden = !items.length;
-  // as many as fit on the line, the last ones giving way; and when a long stop name and two rows of transfer lines
-  // leave no room, none
-  while (near.children.length > 1 && near.scrollWidth > near.clientWidth + 1) near.lastElementChild.remove();
+  // when a long stop name and two rows of transfer lines leave no room for them all, the last ones give way
   const main = $('.tft-main');
-  if (!near.hidden && main.scrollHeight > main.clientHeight + 1) near.hidden = true;
+  while (near.children.length && main.scrollHeight > main.clientHeight + 1) near.lastElementChild.remove();
+  near.hidden = !near.children.length;
   renderTftList();
   const hot = st.phase === 'running' ? st.i + 1 : st.i;
   // on the strip, the stop being approached pulses green and the stop the vehicle stands at is red;
